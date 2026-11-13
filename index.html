@@ -1,12 +1,49 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>CLIPPER AI - Collegamento Meta</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-bYGHK0oIqmJXaHWMBUc4Y3/ToPvQiDxmBXMWeISz4z8='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex">
+<title>CLIPPER AI – collegamento Instagram</title>
+<style>
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #14121c; color: #eee; margin: 0;
+         display: flex; align-items: center; justify-content: center; min-height: 90vh; padding: 0 16px; }
+  main { max-width: 32rem; text-align: center; }
+  p { color: #b9b4c8; line-height: 1.5; }
+</style>
 </head>
 <body>
-  <h2>CLIPPER AI</h2>
-  <p>Pagina di reindirizzamento per l'accesso Meta.</p>
+<main>
+  <h2 id="t">CLIPPER AI</h2>
+  <p id="m">Pagina di ritorno del collegamento Instagram di CLIPPER AI. Puoi chiudere questa scheda.</p>
+</main>
+<script>
+// Pagina di passaggio del login Meta per CLIPPER AI (nessun segreto, nessuna risorsa esterna).
+// Meta rimanda qui con ?code=…&state=…; lo state creato da CLIPPER AI inizia con la porta del ricevitore
+// locale («<porta>.<casuale>»). La pagina inoltra i parametri SOLO a http://127.0.0.1:<porta>/callback/
+// (questo stesso PC) e non li salva né li invia altrove. Il code da solo non basta: serve l'App Secret,
+// che resta nel Gestore credenziali di Windows.
+(function () {
+  var q = new URLSearchParams(window.location.search);
+  var state = q.get("state") || "";
+  var m = /^(\d{4,5})\./.exec(state);
+  var port = m ? parseInt(m[1], 10) : 0;
+  if (window.location.search) {
+    history.replaceState(null, "", window.location.pathname);  // il code non resta nella barra degli indirizzi
+  }
+  if (!(q.get("code") || q.get("error")) || port < 1024 || port > 65535) {
+    return;
+  }
+  var keep = new URLSearchParams();
+  ["code", "state", "error", "error_reason", "error_description"].forEach(function (k) {
+    if (q.get(k) !== null) { keep.set(k, q.get(k)); }
+  });
+  document.getElementById("t").textContent = "Ritorno a CLIPPER AI…";
+  document.getElementById("m").textContent = "Se non succede nulla, controlla che CLIPPER AI sia aperto e riprova il collegamento.";
+  window.location.replace("http://127.0.0.1:" + port + "/callback/?" + keep.toString());
+})();
+</script>
 </body>
 </html>
